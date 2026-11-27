@@ -19,11 +19,6 @@ const Hero = () => {
             MEDUSA STORE
           </Heading>
         </span>
-        <a href="https://github.com/dev-daeun/medusa-store" target="_blank">
-          <Button variant="secondary">
-            View on GitHub <Github />
-          </Button>
-        </a>
       </div>
     </div>
   );
