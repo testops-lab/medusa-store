@@ -1,3 +1,4 @@
+import { getStorefrontPath } from "@lib/util/storefront-path"
 import { sdk } from "@lib/config"
 import { placeOrder } from "@lib/data/cart"
 import { getAuthHeaders, setCartId } from "@lib/data/cookies"
@@ -16,11 +17,11 @@ export async function GET(req: NextRequest) {
   )
   const redirectStatus = searchParams.get("redirect_status")
 
-  // Without a country code the middleware resolves the customer's region and
-  // prefixes it; either way every redirect below stays on this origin.
-  const prefix = countryCode ? `/${countryCode}` : ""
+  // Keep payment return URLs consistent with public storefront paths.
   const rejected = () =>
-    NextResponse.redirect(`${origin}${prefix}/cart?error=payment_failed`)
+    NextResponse.redirect(
+      `${origin}${getStorefrontPath("/cart?error=payment_failed", countryCode)}`
+    )
 
   if (!cartId || !paymentIntent || !paymentIntentClientSecret) {
     return rejected()
@@ -69,7 +70,9 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.redirect(`${origin}${prefix}/checkout?${params}`)
+    return NextResponse.redirect(
+      `${origin}${getStorefrontPath(`/checkout?${params}`, countryCode)}`
+    )
   }
 
   try {
@@ -77,9 +80,13 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     unstable_rethrow(error)
 
-    return NextResponse.redirect(`${origin}${prefix}/cart?error=order_failed`)
+    return NextResponse.redirect(
+      `${origin}${getStorefrontPath("/cart?error=order_failed", countryCode)}`
+    )
   }
 
   // Only reached when the cart did not convert into an order.
-  return NextResponse.redirect(`${origin}${prefix}/cart?error=order_failed`)
+  return NextResponse.redirect(
+    `${origin}${getStorefrontPath("/cart?error=order_failed", countryCode)}`
+  )
 }
