@@ -1,11 +1,12 @@
 "use client"
 
+import { getStorefrontPath } from "@lib/util/storefront-path"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import React from "react"
 
 /**
- * Use this component to create a Next.js `<Link />` that persists the current country code in the url,
+ * Use this component to create a Next.js `<Link />` that uses the current country, omitting the Korean URL prefix,
  * without having to explicitly pass it as a prop.
  */
 const LocalizedClientLink = ({
@@ -20,10 +21,10 @@ const LocalizedClientLink = ({
   passHref?: true
   [x: string]: unknown
 }) => {
-  const { countryCode } = useParams()
+  const { countryCode } = useParams<{ countryCode: string }>()
 
   return (
-    <Link href={`/${countryCode}${href}`} {...props}>
+    <Link href={getStorefrontPath(href, countryCode)} {...props}>
       {children}
     </Link>
   )

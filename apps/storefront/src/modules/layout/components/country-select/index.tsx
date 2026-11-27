@@ -1,5 +1,6 @@
 "use client"
 
+import { stripCountryPrefix } from "@lib/util/storefront-path"
 import {
   Listbox,
   ListboxButton,
@@ -29,8 +30,8 @@ type CountrySelectProps = {
 const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
   const [current, setCurrent] = useState<CountryOption | undefined>(undefined)
 
-  const { countryCode } = useParams()
-  const currentPath = usePathname().split(`/${countryCode}`)[1]
+  const { countryCode } = useParams<{ countryCode: string }>()
+  const currentPath = stripCountryPrefix(usePathname(), countryCode)
 
   const { state, close } = toggleState
 
